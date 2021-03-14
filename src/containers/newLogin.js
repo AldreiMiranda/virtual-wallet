@@ -1,55 +1,74 @@
-import React from 'react';
+import React, { useState } from 'react'
+
 import {
   TextField,
   Grid,
   Button
 } from '@material-ui/core'
-import './../assets/css/login.css'
 
-function Login() {
+
+export default function Login({ }) {
+  const [password, setPassword] = useState(
+    {
+      password: ''
+    })
+  const [name, setName] = useState("")
+  const [passwordConfirm, setpassWordConfirm] = useState("")
+  const [showError, setShowerror] = useState(false)
+  const user_json = JSON.stringify(password);
+
+  const handleSubmit = () => {
+    if (password.password === passwordConfirm) {
+      localStorage.setItem(`${name}`, user_json);
+      setShowerror(false)
+        window.location = '/login'
+    } else {
+      setShowerror(true)
+      return
+    }
+  }
+
   return (
-    <div className="Login" style={{ marginTop: 200 }}>
+    <div style={{ marginTop: 200 }}>
       <Grid container spacing={1} >
         <Grid item xs={12}>
-          <p> Criar uma nova conta </p>
+          <p>Crie uma conta </p>
         </Grid>
         <Grid item xs={12}>
           <TextField
-            id="outlined-password-input"
-            label="Usuario"
-            type="password"
-            autoComplete="current-password"
+            label="Usuário"
             variant="outlined"
+            value={name}
+            onChange={e => setName(e.target.value)}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
-            id="outlined-password-input"
+            error={showError}
             label="Senha"
             type="password"
-            autoComplete="current-password"
             variant="outlined"
+            value={password.password}
+            onChange={e => setPassword({ ...password, password: e.target.value })}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
-            id="outlined-password-input"
-            label="Confirmar senha"
+            error={showError}
+            label="Confirme a senha"
             type="password"
-            autoComplete="current-password"
             variant="outlined"
+            value={passwordConfirm}
+            onChange={e => setpassWordConfirm(e.target.value)}
           />
         </Grid>
+
       </Grid>
-      <Grid item xs={12}>
-        <Button style={{ marginTop: 5 }} variant="contained" color="primary">
-          criar
+      <Grid style={{ marginTop: 5 }} item xs={12}>
+        <Button onClick={handleSubmit} variant="contained" color="primary">
+          Criar
       </Button>
       </Grid>
-
-
     </div>
-  );
-};
-
-export default Login;
+  )
+}
