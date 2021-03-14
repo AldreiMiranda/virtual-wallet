@@ -1,14 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react'
+
 import {
   TextField,
   Grid,
   Button
 } from '@material-ui/core'
-import './../assets/css/login.css'
 
-function Login() {
+
+export default function Login({ }) {
+  const [user, setUser] = useState([
+    {
+      name: 'aldrei',
+      password: '123',
+      balance: '100,000,00',
+      bitcoins: '',
+      britas: '',
+      extract: [],
+    }
+  ])
+
+  const user_json = JSON.stringify(user);
+
+  const handleSubmit = () => {
+    debugger
+    localStorage.setItem("user", user_json);
+  }
+
+
   return (
-    <div className="Login" style={{ marginTop: 200 }}>
+    <div style={{ marginTop: 200 }}>
       <Grid container spacing={1} >
         <Grid item xs={12}>
           <p>Virtual Wallet </p>
@@ -32,18 +52,16 @@ function Login() {
           />
         </Grid>
         <Grid item xs={12}>
-          <p style={{fontSize: 10}}><b><a href="/register" target="_blank">Criar uma conta </a></b></p>
+          <p style={{ fontSize: 10 }}><b><a href="/register">Criar uma conta </a></b></p>
         </Grid>
       </Grid>
       <Grid item xs={12}>
-        <Button variant="contained" color="primary">
+        <Button onChange={handleSubmit} variant="contained" color="primary">
           Entrar
       </Button>
       </Grid>
 
 
     </div>
-  );
-};
-
-export default Login;
+  )
+}
