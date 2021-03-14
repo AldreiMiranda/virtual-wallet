@@ -21,7 +21,7 @@ export default function Login({ }) {
     if (password.password === passwordConfirm) {
       localStorage.setItem(`${name}`, user_json);
       setShowerror(false)
-        window.location = '/login'
+      window.location = '/login'
     } else {
       setShowerror(true)
       return
@@ -65,7 +65,7 @@ export default function Login({ }) {
 
       </Grid>
       <Grid style={{ marginTop: 5 }} item xs={12}>
-        <Button onClick={handleSubmit} variant="contained" color="primary">
+        <Button disabled={!name || !password.password || !passwordConfirm} onClick={handleSubmit} variant="contained" color="primary">
           Criar
       </Button>
       </Grid>

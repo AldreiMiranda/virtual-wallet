@@ -3,27 +3,73 @@ import React, { useState } from 'react'
 import {
   TextField,
   Grid,
-  Button
+  Button,
+  FormControl,
+  InputLabel,
+  OutlinedInput
 } from '@material-ui/core'
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
+import { Visibility, VisibilityOff } from '@material-ui/icons'
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  margin: {
+    margin: theme.spacing(1),
+  },
+  withoutLabel: {
+    marginTop: theme.spacing(3),
+  },
+  textField: {
+    width: '25ch',
+  },
+}));
+
 
 
 export default function Login({ }) {
-  const [user, setUser] = useState([
-    {
-      name: 'aldrei',
-      password: '123',
-      balance: '100,000,00',
-      bitcoins: '',
-      britas: '',
-      extract: [],
-    }
-  ])
+  const classes = useStyles();
+  const [name, setName] = useState("")
+  const [password, setPassword] = useState("")
+  const [showError, setShowerror] = useState(false)
+  const [values, setValues] = useState({
+    amount: '',
+    password: '',
+    weight: '',
+    weightRange: '',
+    showPassword: false,
+  });
 
-  const user_json = JSON.stringify(user);
+  const handleClickShowPassword = () => {
+    setValues({ ...values, showPassword: !values.showPassword });
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleChange = (prop) => (event) => {
+    setValues({ ...values, [prop]: event.target.value });
+  };
 
   const handleSubmit = () => {
-    debugger
-    localStorage.setItem("user", user_json);
+    const getPassWord = localStorage.getItem(`${name}`);
+    if (getPassWord == null) {
+      setShowerror(true)
+      return
+    }
+    const convertPassw = JSON.parse(getPassWord);
+    const passwordLocalStoga = convertPassw?.password
+    if (password != passwordLocalStoga) {
+      setShowerror(true)
+      return
+    }
+    window.location = '/register'
   }
 
 
@@ -35,28 +81,50 @@ export default function Login({ }) {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            id="outlined-password-input"
-            label="Usuario"
-            type="password"
-            autoComplete="current-password"
+            required
+            error={showError && !name}
+            label="Usuário"
             variant="outlined"
+            value={name}
+            onChange={e => setName(e.target.value)}
           />
         </Grid>
+
         <Grid item xs={12}>
-          <TextField
-            id="outlined-password-input"
-            label="Senha"
-            type="password"
-            autoComplete="current-password"
-            variant="outlined"
-          />
+          <FormControl className={clsx(classes.margin, classes.textField)} style={{ borderColor: 'green' }} variant="outlined">
+            <InputLabel >Senha *</InputLabel>
+            <OutlinedInput
+              type={values.showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {values.showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              labelWidth={70}
+            />
+          </FormControl>
         </Grid>
+        {showError &&
+          <Grid item xs={12}>
+            <p> Senha ou usuario invalido </p>
+          </Grid>
+        }
         <Grid item xs={12}>
           <p style={{ fontSize: 10 }}><b><a href="/register">Criar uma conta </a></b></p>
         </Grid>
       </Grid>
+
       <Grid item xs={12}>
-        <Button onChange={handleSubmit} variant="contained" color="primary">
+        <Button onClick={handleSubmit} variant="contained" color="primary">
           Entrar
       </Button>
       </Grid>
