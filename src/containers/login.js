@@ -58,7 +58,7 @@ export default function Login({ }) {
   };
 
   const handleSubmit = () => {
-    const getPassWord = localStorage.getItem(`${name}`);
+    const getPassWord = localStorage.getItem(`login_${name}`);
     if (getPassWord == null) {
       setShowerror(true)
       return
@@ -69,7 +69,10 @@ export default function Login({ }) {
       setShowerror(true)
       return
     }
+    localStorage.setItem(`currentUser`, name );
+
     window.location = '/register'
+
   }
 
 
