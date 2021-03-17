@@ -12,14 +12,24 @@ export default function Login({ }) {
     {
       password: ''
     })
+  const [userWallet, setUserWallet] = useState(
+    {
+      balance: 10000000,
+      bitcoin: 0,
+      brita: 0,
+      extract: []
+    }
+  )
   const [name, setName] = useState("")
   const [passwordConfirm, setpassWordConfirm] = useState("")
   const [showError, setShowerror] = useState(false)
-  const user_json = JSON.stringify(password);
-
+  const userJson = JSON.stringify(password);
+  const userWalletJson = JSON.stringify(userWallet);
   const handleSubmit = () => {
     if (password.password === passwordConfirm) {
-      localStorage.setItem(`${name}`, user_json);
+      localStorage.setItem(`login_${name}`, userJson);
+      localStorage.setItem(`${name}`, userWalletJson);
+
       setShowerror(false)
       window.location = '/login'
     } else {
