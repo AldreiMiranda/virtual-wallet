@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-
+import './style.css'
 import {
-  TextField,
   Grid,
   Button,
   FormControl,
@@ -13,7 +12,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { Visibility, VisibilityOff } from '@material-ui/icons'
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-
+import AccountCircle from '@material-ui/icons/AccountCircle';
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -45,17 +44,6 @@ export default function Login({ }) {
     showPassword: false,
   });
 
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
-  };
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
-
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
 
   const handleSubmit = () => {
     const getPassWord = localStorage.getItem(`login_${name}`);
@@ -69,10 +57,8 @@ export default function Login({ }) {
       setShowerror(true)
       return
     }
-    localStorage.setItem(`currentUser`, name );
-
-    window.location = '/register'
-
+    localStorage.setItem(`currentUser`, name);
+    window.location = '/home'
   }
 
 
@@ -83,20 +69,26 @@ export default function Login({ }) {
           <p>Virtual Wallet </p>
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            required
-            error={showError && !name}
-            label="Usuário"
-            variant="outlined"
-            value={name}
-            onChange={e => setName(e.target.value)}
-          />
+          <FormControl error={showError} className={clsx(classes.margin, classes.textField)} variant="outlined">
+            <InputLabel >Usuário *</InputLabel>
+            <OutlinedInput
+              type={'text'}
+              value={name}
+              onChange={e => setName(e.target.value)}
+              endAdornment={
+                <InputAdornment >
+                  <AccountCircle style={{ color: 'grey' }} />
+                </InputAdornment>
+              }
+              labelWidth={80}
+            />
+          </FormControl>
         </Grid>
-
         <Grid item xs={12}>
-          <FormControl className={clsx(classes.margin, classes.textField)} style={{ borderColor: 'green' }} variant="outlined">
+          <FormControl error={showError} className={clsx(classes.margin, classes.textField)} variant="outlined">
             <InputLabel >Senha *</InputLabel>
             <OutlinedInput
+            className=".MuiOutlinedInput-root"
               type={values.showPassword ? 'text' : 'password'}
               value={password}
               onChange={e => setPassword(e.target.value)}
@@ -104,8 +96,7 @@ export default function Login({ }) {
                 <InputAdornment position="end">
                   <IconButton
                     aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
+                    onClick={() => setValues({ ...values, showPassword: !values.showPassword })}
                     edge="end"
                   >
                     {values.showPassword ? <Visibility /> : <VisibilityOff />}
@@ -116,20 +107,18 @@ export default function Login({ }) {
             />
           </FormControl>
         </Grid>
-        {showError &&
-          <Grid item xs={12}>
-            <p> Senha ou usuario invalido </p>
-          </Grid>
-        }
+
         <Grid item xs={12}>
           <p style={{ fontSize: 10 }}><b><a href="/register">Criar uma conta </a></b></p>
         </Grid>
       </Grid>
 
       <Grid item xs={12}>
-        <Button onClick={handleSubmit} variant="contained" color="primary">
+
+        <Button style={{ backgroundColor: 'green' }} className="Login-button" onClick={handleSubmit} variant="contained" color="primary">
           Entrar
       </Button>
+
       </Grid>
 
 

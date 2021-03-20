@@ -3,7 +3,8 @@ import { Grid, Button } from '@material-ui/core'
 import Top from './../components/home/top'
 import Trade from './../components/home/trade'
 import Extrato from './../components/home/extrato'
-
+import Icon from '@material-ui/core/Icon';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import axios from "axios";
 
 
@@ -53,22 +54,24 @@ export default function Home({ }) {
 
   return (
     <div>
-      <Grid container spacing={1} style={{ height: 50, backgroundColor: 'green' }} >
-        <Grid iten xs={12} style={{ marginTop: 15, color: 'white' }}>
-          bara aqui
+      <Grid container spacing={1} style={{ height: 50 }} >
+        <Grid iten xs={12} style={{ padding: 15, color: 'black', borderBottom: '1px solid green', textAlign: 'end' }}>
+          <Button
+            endIcon={<TrendingUpIcon/>}
+            variant="outlined" 
+            style={{ color: 'green', borderColor: "green" }}
+             onClick={handleClickOpen}>
+            Transações
+            </Button>
         </Grid>
         <Grid item xs={12}>
           <center>
-            <Button variant="outlined" style={{ backgroundColor: 'green', color: 'white', marginTop: 50, width: 400 }} onClick={handleClickOpen}>
-              Transações
-            </Button>
-
             <Top
               userWallet={userWallet}
               bitcoin={bitcoin}
               brita={brita}
             />
-            <Extrato/>
+            <Extrato />
             <Trade
               userWallet={userWallet}
               bitcoin={bitcoin}
@@ -78,7 +81,7 @@ export default function Home({ }) {
               open={open}
             />
 
-            
+
           </center>
 
         </Grid>
