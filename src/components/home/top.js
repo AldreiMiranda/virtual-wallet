@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React  from 'react'
 import { Grid, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import bitcoinIcon from './../../images/bitcoin.jpg'
@@ -8,36 +8,40 @@ import britaIcon from './../../images/brita.jpg'
 const useStyles = makeStyles((theme) => ({
   root: {
     textAlign: 'left',
-    minHeight: 200,
+    minHeight: 210,
     maxWidth: 300,
     color: 'green',
     padding: 5,
     boxShadow: 'rgba(0, 128, 0, 80) 0px 3px 2px -3px, rgba(0, 128, 0, 50) 0px 3px 6px -2px, rgba(0,128,0,50) 0px 3px 6px -2px',
   },
+  grid: {
+    marginTop: 50,
+  }
 }))
 
 export default props => {
   const { userWallet, bitcoin, brita } = props
-
   const classes = useStyles()
 
   return (
     <div>
-      <Grid container spacing={1} style={{ marginTop: 50, marginLeft: 20, marginRight: 20}}>
-        <Grid iten xs={4} style={{ textAlign: '-webkit-center' }}>
+      <Grid container spacing={1} className={classes.grid}>
+        <Grid iten xs={4} >
           <Paper elevation={3} className={classes.root}>
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', marginTop: 5 }}>
               <img src={money} alt="bitcoin" style={{ width: 85, height: 50 }} />
               <h3>Saldo </h3>
-              <p style={{ fontSize: 20 }}>  BRL  {userWallet.balance.toLocaleString('pt-BR',
+              <p style={{ fontSize: 20 }}>
+                BRL  {userWallet.balance.toLocaleString('pt-BR',
                 {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
-                })} </p>
+                })}
+              </p>
             </div>
           </Paper>
         </Grid>
-        <Grid iten xs={4} style={{ textAlign: '-webkit-center' }}>
+        <Grid iten xs={4} >
           <Paper elevation={3} className={classes.root}>
             <div style={{ textAlign: 'center' }}>
               <img src={bitcoinIcon} alt="bitcoin" style={{ width: 85, height: 50 }} />
@@ -54,9 +58,8 @@ export default props => {
                 })}</p>
             </div>
           </Paper>
-
         </Grid>
-        <Grid iten xs={4} style={{ textAlign: '-webkit-center' }}>
+        <Grid iten xs={4} >
           <Paper elevation={3} className={classes.root} >
             <div style={{ textAlign: 'center' }}>
               <img src={britaIcon} alt="bitcoin" style={{ width: 60, height: 60 }} />

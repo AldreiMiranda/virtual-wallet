@@ -3,28 +3,36 @@ import { Grid, Button } from '@material-ui/core'
 import Top from './../components/home/top'
 import Trade from './../components/home/trade'
 import Extract from '../components/home/extract'
-import Icon from '@material-ui/core/Icon';
+import NotificationModal from './../components/home/notificationModal'
+import { makeStyles } from '@material-ui/core/styles'
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import axios from "axios";
+import moment from 'moment';
 
+const useStyles = makeStyles((theme) => ({
+  top: {
+    alignItems: 'center',
+    backgroundColor: 'green',
+    padding: 15,
+    color: 'black',
+    borderBottom: '1px solid green',
+    display: 'flex',
+    justifyContent: 'space-between'
+  },
+  button: {
+    color: 'green',
+    backgroundColor: 'white'
+  }
+}))
 
 export default function Home({ }) {
-
   const [bitcoin, setBitcoin] = useState([])
   const [brita, setbrita] = useState([])
   const getCurrentUser = localStorage.getItem(`currentUser`);
   const getUserWallet = localStorage.getItem(`${getCurrentUser}`)
   const userWallet = JSON.parse(getUserWallet);
   const [open, setOpen] = React.useState(false);
-
-
-
-  const data = new Date()
-  const dia = data.getDate().toString().padStart(2, '0')
-  const b = (data.getMonth() + 1).toString().padStart(2, '0') //+1 pois no getMonth Janeiro começa com zero.
-  const ano = data.getFullYear();
-  const datahoje = `${b}-${dia}-${ano}`
-
+  const [modalNotification, setModalNotification] = useState({ open: false, message: '', title: '' })
 
   const LoadBitcoin = () => {
     axios.get('https://www.mercadobitcoin.net/api/BTC/ticker/').then(response => {
@@ -32,17 +40,23 @@ export default function Home({ }) {
     })
   }
 
+  const date =  new Date()
+  const britaDate = moment(date).format('MM-DD-YYYY')
   const Loadbrita = () => {
-    axios.get(`https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarPeriodo(dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?%40dataInicial='03-10-2021'&%40dataFinalCotacao='${datahoje}'&%24format=json`).then(response => {
+    axios.get(`https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarPeriodo(dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?%40dataInicial='03-10-2021'&%40dataFinalCotacao='${britaDate}'&%24format=json`).then(response => {
       setbrita(response.data.value[response.data.value.length - 1])
     })
   }
-
 
   useEffect(() => {
     LoadBitcoin()
     Loadbrita()
   }, [])
+
+  const handleClickLogout = () => {
+    window.location = '/login'
+    localStorage.removeItem(`currentUser`);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -52,17 +66,42 @@ export default function Home({ }) {
     setOpen(false);
   }
 
+  const handleOpenNotification = (message, title) => {
+    setModalNotification({ open: true, message: message, title: title })
+  }
+
+  const handleCloseNotification = () => {
+    setModalNotification({ open: false })
+  }
+
+  const formatdate = moment(date).format('DD-MM-YYYY')
+  const classes = useStyles()
+
   return (
     <div>
       <Grid container spacing={1} style={{ height: 50 }} >
-        <Grid iten xs={12} style={{ backgroundColor: 'green' , padding: 15, color: 'black', borderBottom: '1px solid green', textAlign: 'end' }}>
-          <Button
-            endIcon={<TrendingUpIcon />}
-            variant="outlined"
-            style={{color: 'green', borderColor: "green", backgroundColor: 'white'}}
-            onClick={handleClickOpen}>
-            <b>Transações</b>
+        <Grid iten xs={12} className={classes.top}>
+          <div>
+            <Button
+              className={classes.button}
+              onClick={handleClickLogout}
+              variant="outlined"
+            >
+              <b> Sair </b>
             </Button>
+          </div>
+          <div style={{ marginLeft: 100 }}>
+            <b style={{ color: 'white' }}>{formatdate}</b>
+          </div>
+          <div>
+            <Button
+              className={classes.button}
+              endIcon={<TrendingUpIcon />}
+              variant="outlined"
+              onClick={handleClickOpen}>
+              <b>Transações</b>
+            </Button>
+          </div>
         </Grid>
         <Grid item xs={12}>
           <center>
@@ -80,12 +119,18 @@ export default function Home({ }) {
               brita={brita}
               currentUser={getCurrentUser}
               handleClose={handleClose}
+              setModalNotification={setModalNotification}
+              handleCloseNotification={handleCloseNotification}
+              handleOpenNotification={handleOpenNotification}
               open={open}
             />
-
-
+            {modalNotification.open &&
+              <NotificationModal
+                handleCloseNotification={handleCloseNotification}
+                modalNotification={modalNotification}
+              />
+            }
           </center>
-
         </Grid>
       </Grid>
     </div>

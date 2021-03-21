@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
-import { Button, Grid, TextField, Dialog, AppBar, Toolbar, IconButton, Paper, InputBase } from '@material-ui/core'
+import { Button, Grid, Dialog, AppBar, Toolbar, IconButton, Paper, InputBase } from '@material-ui/core'
 import Slide from '@material-ui/core/Slide';
 import { InputLabel } from '@material-ui/core'
-import CustomSelect from './../../_atoms/customSelect'
+import CustomSelect from './../../util/customSelect'
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
-
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -15,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     flex: 1,
   },
-  root: {
+  paper: {
     textAlign: 'left',
     minHeight: 300,
     minWidth: 400,
@@ -24,15 +23,27 @@ const useStyles = makeStyles((theme) => ({
     padding: 10,
     boxShadow: 'rgba(0, 128, 0, 80) 0px 3px 2px -3px, rgba(0, 128, 0, 50) 0px 3px 6px -2px, rgba(0,128,0,50) 0px 3px 6px -2px',
   },
-  paper: {
-    textAlign: 'left',
-    maxHeight: 300,
-    maxWidth: 300,
-    color: 'green',
-    padding: 15,
-    boxShadow: 'rgba(0, 128, 0, 80) 0px 3px 2px -3px, rgba(0, 128, 0, 50) 0px 3px 6px -2px, rgba(0,128,0,50) 0px 3px 6px -2px',
-
+  grid: {
+    marginTop: '7%',
+    display: 'flex',
+    justifyContent: 'space-around'
   },
+  grid2: {
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  inputBase: {
+    width: '55%',
+    marginLeft: 5,
+    border: '1px solid #ccc',
+    borderRadius: 5,
+    padding: 5
+  },
+  button: {
+    backgroundColor: 'green',
+    color: 'white',
+    marginRight: 5
+  }
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -40,7 +51,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default props => {
-  const { userWallet, bitcoin, brita, currentUser, handleClose, open } = props
+  const { userWallet, bitcoin, brita, currentUser, handleClose, open, handleOpenNotification } = props
   const [operation, setOperation] = useState({
     moeda1: '',
     moeda2: '',
@@ -48,7 +59,6 @@ export default props => {
     valor: 0,
   })
   const [calculatedValue, setCalculatedValue] = useState()
-
   const cotacaoCompra = {
     BTC: bitcoin.buy,
     BRT: brita.cotacaoCompra
@@ -64,7 +74,6 @@ export default props => {
     setOperation({ ...operation, [name]: e.target.value })
     setCalculatedValue(0)
   }
-
 
   const handleChangeValue = (name, e) => {
     setOperation({ ...operation, [name]: Number(e.target.value) })
@@ -84,11 +93,11 @@ export default props => {
 
   const cotar = () => {
     let novaCotacao = 0
-    if (operation.status == 'buy') {
+    if (operation.status === 'compra') {
       novaCotacao = cotacaoCompra[operation.moeda2]
-    } else if (operation.status == 'sell') {
+    } else if (operation.status === 'venda') {
       novaCotacao = cotacaoVenda[operation.moeda2]
-    } else if (operation.status == 'change') {
+    } else if (operation.status === 'troca') {
       novaCotacao = cotacaoCompra[operation.moeda2] / cotacaoVenda[operation.moeda1]
     }
     setOperation({ ...operation, valor: operation.value / novaCotacao || 0 })
@@ -129,28 +138,31 @@ export default props => {
 
     let showError = false
 
-    if (operation.status == 'buy') {
+    if (operation.status === 'compra') {
       handleBuyOperation()
-    } else if (operation.status == 'sell') {
+    } else if (operation.status === 'venda') {
       handleSellOperation()
-    } else if (operation.status == 'change') {
+    } else if (operation.status === 'troca') {
       handleChangeOperation()
     }
 
-    if (showError) { return }
+    if (showError) {
+      handleOpenNotification('Saldo insuficiente', 'Erro')
+      return
+    }
 
     let date = Date.now()
     const extrato1 = {
       date: date,
       currency: operation.moeda1,
-      value: operation.status === 'sell' ? operation.value : - operation.value,
-      balance: operation.status === 'change' ? userWallet[operation.moeda1] : userWallet.balance,
+      value: operation.status === 'venda' ? operation.value : - operation.value,
+      balance: operation.status === 'troca' ? userWallet[operation.moeda1] : userWallet.balance,
       operation: operation.status
     }
     const extrato2 = {
       date: date,
       currency: operation.moeda2,
-      value: operation.status === 'sell' ? - operation.valor : operation.valor,
+      value: operation.status === 'venda' ? - operation.valor : operation.valor,
       balance: userWallet[operation.moeda2],
       operation: operation.status
     }
@@ -160,9 +172,9 @@ export default props => {
 
     localStorage.setItem(`${currentUser}`, JSON.stringify(userWallet));
 
+    handleClose()
+    handleOpenNotification('Operação realizada com sucesso.', 'Sucesso')
   }
-
-
 
   return (
     <>
@@ -177,43 +189,35 @@ export default props => {
             </div>
           </Toolbar>
         </AppBar>
-        <Grid container spacing={1} style={{ marginTop: 50, marginLeft: 20, marginRight: 20, display: 'flex', justifyContent: 'space-around' }}>
-          <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center' }}>
+        <Grid container spacing={1} className={classes.grid}>
+          <Grid item xs={6} className={classes.grid2}>
             <Paper elevation={3} className={classes.paper}>
               <h3 style={{ textAlign: 'center' }}> Cotações </h3>
               <Grid container>
-                <Grid item xs={12} style={{ marginTop: 10 }}>
+                <Grid item xs={12} >
                   <h3> Bitcoin </h3>
-                </Grid>
-                <Grid item xs={12}>
-                  <b>Compra:</b> BRL {bitcoin.buy}
-                </Grid>
-                <Grid item xs={12}>
-                  <b> Venda:</b> BRL {bitcoin.sell}
+
+                  <p> <b>Compra:</b> BRL {bitcoin.buy} <br />
+                    <b> Venda:</b> BRL {bitcoin.sell} </p>
                 </Grid>
                 <Grid item xs={12}>
                   <span> <hr /> </span>
                 </Grid>
                 <Grid item xs={12}>
                   <h3>Brita</h3>
-                </Grid>
-                <Grid item xs={12}>
-                  <b>Compra:</b> BRL {brita.cotacaoCompra}
-                </Grid>
-                <Grid item xs={12}>
-                  <b>Vender:</b> BRL {brita.cotacaoVenda}
+                  <p> <b>Compra:</b> BRL {brita.cotacaoCompra} <br />
+                    <b>Vender:</b> BRL {brita.cotacaoVenda} </p>
                 </Grid>
               </Grid>
             </Paper>
           </Grid>
-          <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center' }}>
-            <Paper elevation={3} className={classes.root}>
+          <Grid item xs={6} className={classes.grid2}>
+            <Paper elevation={3} className={classes.paper}>
               <h3 style={{ textAlign: 'center' }}> Transações </h3>
               <Grid container>
                 <InputLabel style={{ padding: 5, color: 'green' }}>
                   Operação
                  </InputLabel>
-
                 <Grid item xs={12}>
                   <CustomSelect
                     style={{ width: '95%' }}
@@ -227,20 +231,20 @@ export default props => {
                     <option value={""}>
                       Selecione
                     </option>
-                    <option value={"sell"}>
+                    <option value={"venda"}>
                       Vender
                     </option>
-                    <option value={"buy"}>
+                    <option value={"compra"}>
                       Comprar
                     </option>
-                    <option value={"change"}>
+                    <option value={"troca"}>
                       Trocar
                     </option>
                   </CustomSelect>
                 </Grid>
                 <Grid item xs={12} >
                   <InputLabel style={{ marginTop: 10, padding: 5, color: 'green' }}>
-                    {operation.status === 'sell' ? 'Você Recebe' : 'Você Paga'}
+                    {operation.status === 'venda' ? 'Você Recebe' : 'Você Paga'}
                   </InputLabel>
                   <CustomSelect
                     disabled={!operation.status}
@@ -255,29 +259,29 @@ export default props => {
                     <option value={""}>
                       Selecione
                     </option>
-                    <option disabled={operation.status == 'change'} value={"BRL"}>
+                    <option disabled={operation.status === 'troca'} value={"BRL"}>
                       Real (BRL)
                     </option>
-                    <option disabled={operation.status == 'sell' || operation.status == 'buy'} value={"BTC"}>
+                    <option disabled={operation.status === 'venda' || operation.status === 'compra'} value={"BTC"}>
                       Bitcoin (BTC)
                     </option>
-                    <option disabled={operation.status == 'sell' || operation.status == 'buy'} value={"BRT"}>
+                    <option disabled={operation.status === 'venda' || operation.status === 'compra'} value={"BRT"}>
                       Brita (BRT)
                     </option>
                   </CustomSelect>
 
                   <InputBase
-                    style={{ width: '55%', marginLeft: 5, border: '1px solid #ccc', borderRadius: 5, padding: 5 }}
+                    className={classes.inputBase}
                     placeholder="Quantidade"
                     type="number"
-
+                    inputProps={{ min: 0 }}
                     value={operation.value}
                     onChange={(e) => handleChangeValue('value', e)}
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel style={{ marginTop: 10, padding: 5, color: 'green' }}>
-                    {operation.status === 'sell' ? 'Você Vende' : 'Você Recebe'}
+                    {operation.status === 'venda' ? 'Você Vende' : 'Você Recebe'}
                   </InputLabel>
                   <CustomSelect
                     disabled={!operation.status}
@@ -300,9 +304,9 @@ export default props => {
                   </CustomSelect>
 
                   <InputBase
+                    className={classes.inputBase}
                     disabled
                     placeholder="Quantidade"
-                    style={{ width: '55%', marginLeft: 5, border: '1px solid #ccc', borderRadius: 5, padding: 5 }}
                     type="number"
                     value={calculatedValue}
                   />
@@ -312,14 +316,21 @@ export default props => {
 
 
           </Grid>
-          <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center' }}>
+          <Grid item xs={6} className={classes.grid2}>
           </Grid>
-          <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center' }}>
+          <Grid item xs={6} className={classes.grid2}>
             <div style={{ width: 400, marginTop: 20 }}>
-              <Button onClick={cotar} variant="contained" style={{ color: 'white', backgroundColor: 'green' }}>
+              <Button
+                className={classes.button}
+                onClick={cotar}
+                variant="contained" >
                 Calcular
                 </Button>
-              <Button disabled={operation.valor == 0} onClick={handleSave} variant="contained" style={{ color: 'white', backgroundColor: 'green', marginLeft: 5 }} >
+              <Button
+                className={classes.button}
+                disabled={operation.valor === 0}
+                onClick={handleSave}
+                variant="contained"  >
                 Finalizar
                 </Button>
             </div>
