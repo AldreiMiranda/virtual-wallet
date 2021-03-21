@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Grid, Button } from '@material-ui/core'
 import Top from './../components/home/top'
 import Trade from './../components/home/trade'
-import Extrato from './../components/home/extrato'
+import Extract from '../components/home/extract'
 import Icon from '@material-ui/core/Icon';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import axios from "axios";
@@ -55,13 +55,13 @@ export default function Home({ }) {
   return (
     <div>
       <Grid container spacing={1} style={{ height: 50 }} >
-        <Grid iten xs={12} style={{ padding: 15, color: 'black', borderBottom: '1px solid green', textAlign: 'end' }}>
+        <Grid iten xs={12} style={{ backgroundColor: 'green' , padding: 15, color: 'black', borderBottom: '1px solid green', textAlign: 'end' }}>
           <Button
-            endIcon={<TrendingUpIcon/>}
-            variant="outlined" 
-            style={{ color: 'green', borderColor: "green" }}
-             onClick={handleClickOpen}>
-            Transações
+            endIcon={<TrendingUpIcon />}
+            variant="outlined"
+            style={{color: 'green', borderColor: "green", backgroundColor: 'white'}}
+            onClick={handleClickOpen}>
+            <b>Transações</b>
             </Button>
         </Grid>
         <Grid item xs={12}>
@@ -71,7 +71,9 @@ export default function Home({ }) {
               bitcoin={bitcoin}
               brita={brita}
             />
-            <Extrato />
+            <Extract
+              extract={userWallet.extract}
+            />
             <Trade
               userWallet={userWallet}
               bitcoin={bitcoin}

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 
 import {
-  TextField,
   Grid,
   Button,
   FormControl,
@@ -39,7 +38,7 @@ export default function Login({ }) {
     })
   const [userWallet, setUserWallet] = useState(
     {
-      balance: 10000000,
+      balance: 100000000,
       BTC: 0,
       BRT: 0,
       extract: []
@@ -69,12 +68,6 @@ export default function Login({ }) {
       return
     }
   }
-
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
-
 
   return (
     <div style={{ marginTop: 200 }}>
@@ -144,7 +137,10 @@ export default function Login({ }) {
         </Grid>
       </Grid>
       <Grid style={{ marginTop: 5 }} item xs={12}>
-        <Button disabled={!name || !password.password || !passwordConfirm} onClick={handleSubmit} variant="contained" color="primary">
+        <Button
+          disabled={!name || !password.password || !passwordConfirm}
+          onClick={handleSubmit} variant="contained"
+          style={{ backgroundColor: 'green', color: 'white' }}>
           Criar
       </Button>
       </Grid>

@@ -23,13 +23,17 @@ export default props => {
 
   return (
     <div>
-      <Grid container spacing={1} style={{ marginTop: 50, marginLeft: 20, marginRight: 20 }}>
+      <Grid container spacing={1} style={{ marginTop: 50, marginLeft: 20, marginRight: 20}}>
         <Grid iten xs={4} style={{ textAlign: '-webkit-center' }}>
           <Paper elevation={3} className={classes.root}>
             <div style={{ textAlign: 'center' }}>
               <img src={money} alt="bitcoin" style={{ width: 85, height: 50 }} />
               <h3>Saldo </h3>
-            <p style={{fontSize: 20}}>  BRL  {userWallet.balance} </p>
+              <p style={{ fontSize: 20 }}>  BRL  {userWallet.balance.toLocaleString('pt-BR',
+                {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })} </p>
             </div>
           </Paper>
         </Grid>
@@ -38,8 +42,16 @@ export default props => {
             <div style={{ textAlign: 'center' }}>
               <img src={bitcoinIcon} alt="bitcoin" style={{ width: 85, height: 50 }} />
               <h3> Bitcoin</h3>
-              <p style={{fontSize: 20}} >BTC {userWallet.BTC}</p>
-              <p style={{fontSize: 20}}>BRL {userWallet.BTC * bitcoin.sell}</p>
+              <p style={{ fontSize: 20 }} >BTC {userWallet.BTC.toLocaleString('pt-BR',
+                {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 8
+                })}</p>
+              <p style={{ fontSize: 20 }}>BRL {(userWallet.BTC * bitcoin.sell).toLocaleString('pt-BR',
+                {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}</p>
             </div>
           </Paper>
 
@@ -49,8 +61,16 @@ export default props => {
             <div style={{ textAlign: 'center' }}>
               <img src={britaIcon} alt="bitcoin" style={{ width: 60, height: 60 }} />
               <h3>Brita</h3>
-              <p style={{fontSize: 20}}>BRT {userWallet.BRT}</p>
-              <p style={{fontSize: 20}}>BRL {userWallet.BRT * brita.cotacaoVenda}</p>
+              <p style={{ fontSize: 20 }}>BRT {userWallet.BRT.toLocaleString('pt-BR',
+                {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}</p>
+              <p style={{ fontSize: 20 }}>BRL {(userWallet.BRT * brita.cotacaoVenda).toLocaleString('pt-BR',
+                {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}</p>
             </div>
           </Paper>
         </Grid>
