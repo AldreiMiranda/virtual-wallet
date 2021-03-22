@@ -27,9 +27,14 @@ const useStyles = makeStyles((theme) => ({
   textField: {
     width: '25ch',
   },
+  title: {
+    color: 'green'
+  },
+  button: {
+    backgroundColor: 'green',
+    color: 'white'
+  }
 }));
-
-
 
 export default function Login({ }) {
   const classes = useStyles();
@@ -44,29 +49,26 @@ export default function Login({ }) {
     showPassword: false,
   });
 
-
   const handleSubmit = () => {
-    const getPassWord = localStorage.getItem(`login_${name}`);
-    if (getPassWord == null) {
+    const getPassword = localStorage.getItem(`login_${name}`);
+    if (!getPassword) {
       setShowerror(true)
       return
     }
-    const convertPassw = JSON.parse(getPassWord);
-    const passwordLocalStoga = convertPassw?.password
-    if (password != passwordLocalStoga) {
+    const storagePassword = JSON.parse(getPassword)?.password
+    if (password != storagePassword) {
       setShowerror(true)
       return
     }
     localStorage.setItem(`currentUser`, name);
-    window.location = '/home'
+    window.location = '/'
   }
-
 
   return (
     <div style={{ marginTop: 200 }}>
       <Grid container spacing={1} >
-        <Grid item xs={12}>
-          <p>Virtual Wallet </p>
+        <Grid item xs={12} className={classes.title}>
+          <h3>Virtual Wallet</h3>
         </Grid>
         <Grid item xs={12}>
           <FormControl error={showError} className={clsx(classes.margin, classes.textField)} variant="outlined">
@@ -85,10 +87,12 @@ export default function Login({ }) {
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <FormControl error={showError} className={clsx(classes.margin, classes.textField)} variant="outlined">
+          <FormControl error={showError}
+            className={clsx(classes.margin, classes.textField)}
+            variant="outlined">
             <InputLabel >Senha *</InputLabel>
             <OutlinedInput
-            className=".MuiOutlinedInput-root"
+              className=".MuiOutlinedInput-root"
               type={values.showPassword ? 'text' : 'password'}
               value={password}
               onChange={e => setPassword(e.target.value)}
@@ -107,21 +111,19 @@ export default function Login({ }) {
             />
           </FormControl>
         </Grid>
-
         <Grid item xs={12}>
-          <p style={{ fontSize: 10 }}><b><a href="/register">Criar uma conta </a></b></p>
+          <p style={{ fontSize: 10 }}>
+            <b><a href="/register">Criar uma conta </a></b>
+          </p>
         </Grid>
       </Grid>
-
       <Grid item xs={12}>
-
-        <Button style={{ backgroundColor: 'green' }} className="Login-button" onClick={handleSubmit} variant="contained" color="primary">
+        <Button className={classes.button}
+          onClick={handleSubmit}
+          variant="contained">
           Entrar
-      </Button>
-
+       </Button>
       </Grid>
-
-
     </div>
   )
 }

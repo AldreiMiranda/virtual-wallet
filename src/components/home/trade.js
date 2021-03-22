@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
-import { Button, Grid, TextField, Dialog, AppBar, Toolbar, IconButton, Paper, InputBase } from '@material-ui/core'
+import { Button, Grid, Dialog, AppBar, Toolbar, IconButton, Paper, InputBase } from '@material-ui/core'
 import Slide from '@material-ui/core/Slide';
 import { InputLabel } from '@material-ui/core'
-import CustomSelect from './../../_atoms/customSelect'
+import CustomSelect from './../../util/customSelect'
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
-
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -15,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     flex: 1,
   },
-  root: {
+  paper: {
     textAlign: 'left',
     minHeight: 300,
     minWidth: 400,
@@ -24,15 +23,27 @@ const useStyles = makeStyles((theme) => ({
     padding: 10,
     boxShadow: 'rgba(0, 128, 0, 80) 0px 3px 2px -3px, rgba(0, 128, 0, 50) 0px 3px 6px -2px, rgba(0,128,0,50) 0px 3px 6px -2px',
   },
-  paper: {
-    textAlign: 'left',
-    maxHeight: 300,
-    maxWidth: 300,
-    color: 'green',
-    padding: 15,
-    boxShadow: 'rgba(0, 128, 0, 80) 0px 3px 2px -3px, rgba(0, 128, 0, 50) 0px 3px 6px -2px, rgba(0,128,0,50) 0px 3px 6px -2px',
-
+  grid: {
+    marginTop: '7%',
+    display: 'flex',
+    justifyContent: 'space-around'
   },
+  grid2: {
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  inputBase: {
+    width: '55%',
+    marginLeft: 5,
+    border: '1px solid #ccc',
+    borderRadius: 5,
+    padding: 5
+  },
+  button: {
+    backgroundColor: 'green',
+    color: 'white',
+    marginRight: 5
+  }
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -40,20 +51,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default props => {
-  const { userWallet, bitcoin, brita, currentUser, handleClose, open } = props
+  const { userWallet, bitcoin, brita, currentUser, handleCloseTransactions, openTransactions, handleOpenNotification } = props
   const [operation, setOperation] = useState({
-    moeda1: '',
-    moeda2: '',
-    value: 0,
-    valor: 0,
+    currency1: '',
+    currency2: '',
+    currencyValue1: 0,
+    currencyValue2: 0,
   })
   const [calculatedValue, setCalculatedValue] = useState()
-
-  const cotacaoCompra = {
+  const buyPrice = {
     BTC: bitcoin.buy,
     BRT: brita.cotacaoCompra
   }
-  const cotacaoVenda = {
+  const sellPrice = {
     BTC: bitcoin.sell,
     BRT: brita.cotacaoVenda
   }
@@ -65,7 +75,6 @@ export default props => {
     setCalculatedValue(0)
   }
 
-
   const handleChangeValue = (name, e) => {
     setOperation({ ...operation, [name]: Number(e.target.value) })
     setCalculatedValue(0)
@@ -73,103 +82,106 @@ export default props => {
 
   const handleChangeStatus = (name, e) => {
     setOperation({
-      moeda1: '',
-      moeda2: '',
-      value: 0,
-      valor: 0,
+      currency1: '',
+      currency2: '',
+      currencyValue1: 0,
+      currencyValue2: 0,
       [name]: e.target.value
     })
     setCalculatedValue(0)
   }
 
-  const cotar = () => {
-    let novaCotacao = 0
-    if (operation.status == 'buy') {
-      novaCotacao = cotacaoCompra[operation.moeda2]
-    } else if (operation.status == 'sell') {
-      novaCotacao = cotacaoVenda[operation.moeda2]
-    } else if (operation.status == 'change') {
-      novaCotacao = cotacaoCompra[operation.moeda2] / cotacaoVenda[operation.moeda1]
+  const calculatePrice = () => {
+    let newPrice = 0
+    if (operation.status === 'compra') {
+      newPrice = buyPrice[operation.currency2]
+    } else if (operation.status === 'venda') {
+      newPrice = sellPrice[operation.currency2]
+    } else if (operation.status === 'troca') {
+      newPrice = buyPrice[operation.currency2] / sellPrice[operation.currency1]
     }
-    setOperation({ ...operation, valor: operation.value / novaCotacao || 0 })
-    setCalculatedValue(operation.value / novaCotacao)
+    setOperation({ ...operation, currencyValue2: operation.currencyValue1 / newPrice || 0 })
+    setCalculatedValue(operation.currencyValue1 / newPrice)
   }
 
   const handleSave = () => {
 
     const handleBuyOperation = () => {
-      let balance = userWallet.balance - operation.value
+      let balance = userWallet.balance - operation.currencyValue1
       if (balance < 0) {
         showError = true
         return
       }
       userWallet.balance = balance
-      userWallet[operation.moeda2] = userWallet[operation.moeda2] + operation.valor
+      userWallet[operation.currency2] = userWallet[operation.currency2] + operation.currencyValue2
     }
 
     const handleChangeOperation = () => {
-      let moeda1Value = userWallet[operation.moeda1] - operation.value
-      if (moeda1Value < 0) {
+      let currency1Balance = userWallet[operation.currency1] - operation.currencyValue1
+      if (currency1Balance < 0) {
         showError = true
         return
       }
-      userWallet[operation.moeda1] = moeda1Value
-      userWallet[operation.moeda2] = userWallet[operation.moeda2] + operation.valor
+      userWallet[operation.currency1] = currency1Balance
+      userWallet[operation.currency2] = userWallet[operation.currency2] + operation.currencyValue2
     }
 
     const handleSellOperation = () => {
-      let moeda2Balance = userWallet[operation.moeda2] - operation.valor
-      if (moeda2Balance < 0) {
+      let currency2Balance = userWallet[operation.currency2] - operation.currencyValue2
+      if (currency2Balance < 0) {
         showError = true
         return
       }
-      userWallet.balance = userWallet.balance + operation.value
-      userWallet[operation.moeda2] = moeda2Balance
+      userWallet.balance = userWallet.balance + operation.currencyValue1
+      userWallet[operation.currency2] = currency2Balance
     }
 
     let showError = false
 
-    if (operation.status == 'buy') {
+    if (operation.status === 'compra') {
       handleBuyOperation()
-    } else if (operation.status == 'sell') {
+    } else if (operation.status === 'venda') {
       handleSellOperation()
-    } else if (operation.status == 'change') {
+    } else if (operation.status === 'troca') {
       handleChangeOperation()
     }
 
-    if (showError) { return }
+    if (showError) {
+      handleOpenNotification('Saldo insuficiente', 'Erro')
+      return
+    }
 
     let date = Date.now()
-    const extrato1 = {
+    const extract1 = {
       date: date,
-      currency: operation.moeda1,
-      value: operation.status === 'sell' ? operation.value : - operation.value,
-      balance: operation.status === 'change' ? userWallet[operation.moeda1] : userWallet.balance,
+      currency: operation.currency1,
+      value: operation.status === 'venda' ? operation.currencyValue1 : - operation.currencyValue1,
+      balance: operation.status === 'troca' ? userWallet[operation.currency1] : userWallet.balance,
       operation: operation.status
     }
-    const extrato2 = {
+    const extract2 = {
       date: date,
-      currency: operation.moeda2,
-      value: operation.status === 'sell' ? - operation.valor : operation.valor,
-      balance: userWallet[operation.moeda2],
+      currency: operation.currency2,
+      value: operation.status === 'venda' ? - operation.currencyValue2 : operation.currencyValue2,
+      balance: userWallet[operation.currency2],
       operation: operation.status
     }
 
-    userWallet.extract.push(extrato1)
-    userWallet.extract.push(extrato2)
+    userWallet.extract.push(extract1)
+    userWallet.extract.push(extract2)
 
     localStorage.setItem(`${currentUser}`, JSON.stringify(userWallet));
 
+    handleCloseTransactions()
+    handleOpenNotification('Operação realizada com sucesso.', 'Sucesso')
   }
-
-
 
   return (
     <>
-      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition} >
+      <Dialog fullScreen open={openTransactions} onClose={handleCloseTransactions} TransitionComponent={Transition} >
         <AppBar className={classes.appBar} style={{ backgroundColor: 'green' }}>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+            <IconButton edge="start" color="inherit" onClick={handleCloseTransactions} aria-label="close">
               <CloseIcon />
             </IconButton>
             <div>
@@ -177,43 +189,34 @@ export default props => {
             </div>
           </Toolbar>
         </AppBar>
-        <Grid container spacing={1} style={{ marginTop: 50, marginLeft: 20, marginRight: 20, display: 'flex', justifyContent: 'space-around' }}>
-          <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center' }}>
+        <Grid container spacing={1} className={classes.grid}>
+          <Grid item xs={6} className={classes.grid2}>
             <Paper elevation={3} className={classes.paper}>
               <h3 style={{ textAlign: 'center' }}> Cotações </h3>
               <Grid container>
-                <Grid item xs={12} style={{ marginTop: 10 }}>
+                <Grid item xs={12} >
                   <h3> Bitcoin </h3>
-                </Grid>
-                <Grid item xs={12}>
-                  <b>Compra:</b> BRL {bitcoin.buy}
-                </Grid>
-                <Grid item xs={12}>
-                  <b> Venda:</b> BRL {bitcoin.sell}
+                    <p> <b>Compra:</b> BRL {bitcoin.buy} <br />
+                    <b> Venda:</b> BRL {bitcoin.sell} </p>
                 </Grid>
                 <Grid item xs={12}>
                   <span> <hr /> </span>
                 </Grid>
                 <Grid item xs={12}>
                   <h3>Brita</h3>
-                </Grid>
-                <Grid item xs={12}>
-                  <b>Compra:</b> BRL {brita.cotacaoCompra}
-                </Grid>
-                <Grid item xs={12}>
-                  <b>Vender:</b> BRL {brita.cotacaoVenda}
+                  <p> <b>Compra:</b> BRL {brita.cotacaoCompra} <br />
+                    <b>Vender:</b> BRL {brita.cotacaoVenda} </p>
                 </Grid>
               </Grid>
             </Paper>
           </Grid>
-          <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center' }}>
-            <Paper elevation={3} className={classes.root}>
+          <Grid item xs={6} className={classes.grid2}>
+            <Paper elevation={3} className={classes.paper}>
               <h3 style={{ textAlign: 'center' }}> Transações </h3>
               <Grid container>
                 <InputLabel style={{ padding: 5, color: 'green' }}>
                   Operação
                  </InputLabel>
-
                 <Grid item xs={12}>
                   <CustomSelect
                     style={{ width: '95%' }}
@@ -227,99 +230,102 @@ export default props => {
                     <option value={""}>
                       Selecione
                     </option>
-                    <option value={"sell"}>
+                    <option value={"venda"}>
                       Vender
                     </option>
-                    <option value={"buy"}>
+                    <option value={"compra"}>
                       Comprar
                     </option>
-                    <option value={"change"}>
+                    <option value={"troca"}>
                       Trocar
                     </option>
                   </CustomSelect>
                 </Grid>
                 <Grid item xs={12} >
                   <InputLabel style={{ marginTop: 10, padding: 5, color: 'green' }}>
-                    {operation.status === 'sell' ? 'Você Recebe' : 'Você Paga'}
+                    {operation.status === 'venda' ? 'Você Recebe' : 'Você Paga'}
                   </InputLabel>
                   <CustomSelect
                     disabled={!operation.status}
                     style={{ width: '40%' }}
-                    name={operation.moeda1}
-                    labelId="moeda1"
-                    id="moeda1"
-                    value={operation.moeda1}
-                    onChange={(e) => handleChange('moeda1', e)}
+                    name={operation.currency1}
+                    labelId="currency1"
+                    id="currency1"
+                    value={operation.currency1}
+                    onChange={(e) => handleChange('currency1', e)}
                     required
                   >
                     <option value={""}>
                       Selecione
                     </option>
-                    <option disabled={operation.status == 'change'} value={"BRL"}>
+                    <option disabled={operation.status === 'troca'} value={"BRL"}>
                       Real (BRL)
                     </option>
-                    <option disabled={operation.status == 'sell' || operation.status == 'buy'} value={"BTC"}>
+                    <option disabled={operation.status === 'venda' || operation.status === 'compra'} value={"BTC"}>
                       Bitcoin (BTC)
                     </option>
-                    <option disabled={operation.status == 'sell' || operation.status == 'buy'} value={"BRT"}>
+                    <option disabled={operation.status === 'venda' || operation.status === 'compra'} value={"BRT"}>
                       Brita (BRT)
                     </option>
                   </CustomSelect>
-
                   <InputBase
-                    style={{ width: '55%', marginLeft: 5, border: '1px solid #ccc', borderRadius: 5, padding: 5 }}
+                    className={classes.inputBase}
                     placeholder="Quantidade"
                     type="number"
-
-                    value={operation.value}
-                    onChange={(e) => handleChangeValue('value', e)}
+                    inputProps={{ min: 0 }}
+                    value={operation.currencyValue1}
+                    onChange={(e) => handleChangeValue('currencyValue1', e)}
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel style={{ marginTop: 10, padding: 5, color: 'green' }}>
-                    {operation.status === 'sell' ? 'Você Vende' : 'Você Recebe'}
+                    {operation.status === 'venda' ? 'Você Vende' : 'Você Recebe'}
                   </InputLabel>
                   <CustomSelect
                     disabled={!operation.status}
                     style={{ width: '40%' }}
-                    labelId="moeda2"
-                    id="moeda2"
-                    value={operation.moeda2}
-                    onChange={(e) => handleChange('moeda2', e)}
+                    labelId="currency2"
+                    id="currency2"
+                    value={operation.currency2}
+                    onChange={(e) => handleChange('currency2', e)}
                     required
                   >
                     <option value={""}>
                       Selecione
                     </option>
-                    <option disabled={operation.moeda1 === 'BTC'} value={"BTC"}>
+                    <option disabled={operation.currency1 === 'BTC'} value={"BTC"}>
                       Bitcoin (BTC)
                     </option>
-                    <option disabled={operation.moeda1 === 'BRT'} value={"BRT"}>
+                    <option disabled={operation.currency1 === 'BRT'} value={"BRT"}>
                       Brita (BRT)
                    </option>
                   </CustomSelect>
-
                   <InputBase
+                    className={classes.inputBase}
                     disabled
                     placeholder="Quantidade"
-                    style={{ width: '55%', marginLeft: 5, border: '1px solid #ccc', borderRadius: 5, padding: 5 }}
                     type="number"
                     value={calculatedValue}
                   />
                 </Grid>
               </Grid>
             </Paper>
-
-
           </Grid>
-          <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center' }}>
+          <Grid item xs={6} className={classes.grid2}>
           </Grid>
-          <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center' }}>
+          <Grid item xs={6} className={classes.grid2}>
             <div style={{ width: 400, marginTop: 20 }}>
-              <Button onClick={cotar} variant="contained" style={{ color: 'white', backgroundColor: 'green' }}>
+              <Button
+                className={classes.button}
+                onClick={calculatePrice}
+                variant="contained" >
                 Calcular
                 </Button>
-              <Button disabled={operation.valor == 0} onClick={handleSave} variant="contained" style={{ color: 'white', backgroundColor: 'green', marginLeft: 5 }} >
+              <Button
+                className={classes.button}
+                disabled={operation.currencyValue2 === 0}
+                onClick={handleSave}
+                variant="contained"  >
                 Finalizar
                 </Button>
             </div>

@@ -34,7 +34,6 @@ const columns = [
 
 ];
 
-
 const useStyles = makeStyles({
   root: {
     width: '98%',
@@ -53,12 +52,11 @@ const useStyles = makeStyles({
 
 export default props => {
   const { extract } = props
-
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const sortedExtract = extract.slice().sort((a, b) => b.date - a.date)
+  const extractSortedByDate = extract.slice().sort((a, b) => b.date - a.date)
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -88,9 +86,8 @@ export default props => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedExtract.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((extract) => {
+            {extractSortedByDate.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((extract) => {
               return (
-                // <TableRow className={classes.tableRow} style={{hoverColor:' #f4f9f4'}} hover role="checkbox" tabIndex={-1} key={extract.code} ></TableRow>
                 <TableRow hover className={classes.tableRow} role="checkbox" tabIndex={-1} key={extract.code} >
                   {columns.map((column) => {
                     const value = extract[column.id];

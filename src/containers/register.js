@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-
 import {
   Grid,
   Button,
@@ -7,10 +6,10 @@ import {
   InputLabel,
   OutlinedInput
 } from '@material-ui/core'
-
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import Reply from '@material-ui/icons/Reply';
 import { Visibility, VisibilityOff } from '@material-ui/icons'
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -29,6 +28,13 @@ const useStyles = makeStyles((theme) => ({
   textField: {
     width: '25ch',
   },
+  button: {
+    backgroundColor: 'green',
+    color: "white"
+  },
+  title: {
+    color: 'green'
+  }
 }));
 
 export default function Login({ }) {
@@ -47,7 +53,6 @@ export default function Login({ }) {
   const classes = useStyles();
   const [name, setName] = useState("")
   const [passwordConfirm, setpassWordConfirm] = useState("")
-  const [showError, setShowerror] = useState(false)
   const userJson = JSON.stringify(password);
   const userWalletJson = JSON.stringify(userWallet);
   const [values, setValues] = useState({
@@ -61,19 +66,26 @@ export default function Login({ }) {
     if (password.password === passwordConfirm) {
       localStorage.setItem(`login_${name}`, userJson);
       localStorage.setItem(`${name}`, userWalletJson);
-      setShowerror(false)
       window.location = '/login'
     } else {
-      setShowerror(true)
       return
     }
   }
 
   return (
-    <div style={{ marginTop: 200 }}>
-      <Grid container spacing={1} >
-        <Grid item xs={12}>
-          <p>Crie uma conta </p>
+    <div >
+      <div style={{ display: 'flex', padding: 15 }}>
+        <Button
+          className={classes.button}
+          onClick={() => { window.location = '/login' }}
+          variant="contained"
+        >
+          <Reply style={{ color: 'white' }} />
+        </Button>
+      </div>
+      <Grid container spacing={1} style={{ marginTop: 200 }} >
+        <Grid item xs={12} className={classes.title}>
+          <h3 > Crie uma conta </h3>
         </Grid>
         <Grid item xs={12}>
           <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
@@ -138,9 +150,10 @@ export default function Login({ }) {
       </Grid>
       <Grid style={{ marginTop: 5 }} item xs={12}>
         <Button
-          disabled={!name || !password.password || !passwordConfirm}
+          className={classes.button}
+          disabled={!name || !password.password || !passwordConfirm || password.password != passwordConfirm}
           onClick={handleSubmit} variant="contained"
-          style={{ backgroundColor: 'green', color: 'white' }}>
+        >
           Criar
       </Button>
       </Grid>
