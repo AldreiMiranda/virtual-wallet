@@ -108,13 +108,13 @@ export default function Login({ }) {
           <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
             <InputLabel >Senha </InputLabel>
             <OutlinedInput
+              name='password'
               type={values.showPassword ? 'text' : 'password'}
               value={password.password}
               onChange={e => setPassword({ ...password, password: e.target.value })}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
-                    name='password'
                     aria-label="toggle password visibility"
                     onClick={() => setValues({ ...values, showPassword: !values.showPassword })}
                     edge="end"

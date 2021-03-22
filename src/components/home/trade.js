@@ -211,7 +211,7 @@ export default props => {
             </Paper>
           </Grid>
           <Grid item xs={6} className={classes.grid2}>
-            <Paper elevation={3} className={classes.paper}>
+            <Paper name={"transactionPaper"} elevation={3} className={classes.paper}>
               <h3 style={{ textAlign: 'center' }}> Transações </h3>
               <Grid container>
                 <InputLabel style={{ padding: 5, color: 'green' }}>
@@ -269,6 +269,7 @@ export default props => {
                     </option>
                   </CustomSelect>
                   <InputBase
+                    name={"qtd"}
                     className={classes.inputBase}
                     placeholder="Quantidade"
                     type="number"

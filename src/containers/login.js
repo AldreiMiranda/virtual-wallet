@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import './style.css'
 import {
   Grid,
   Button,
@@ -74,6 +73,7 @@ export default function Login({ }) {
           <FormControl error={showError} className={clsx(classes.margin, classes.textField)} variant="outlined">
             <InputLabel >Usuário *</InputLabel>
             <OutlinedInput
+              name={"name"}
               type={'text'}
               value={name}
               onChange={e => setName(e.target.value)}
@@ -92,7 +92,7 @@ export default function Login({ }) {
             variant="outlined">
             <InputLabel >Senha *</InputLabel>
             <OutlinedInput
-              className=".MuiOutlinedInput-root"
+              name={"password"}
               type={values.showPassword ? 'text' : 'password'}
               value={password}
               onChange={e => setPassword(e.target.value)}
