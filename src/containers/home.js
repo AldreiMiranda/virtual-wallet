@@ -31,7 +31,7 @@ export default function Home({ }) {
   const getCurrentUser = localStorage.getItem(`currentUser`);
   const getUserWallet = localStorage.getItem(`${getCurrentUser}`)
   const userWallet = JSON.parse(getUserWallet);
-  const [open, setOpen] = React.useState(false);
+  const [openTransactions, setOpenTransactions] = React.useState(false);
   const [modalNotification, setModalNotification] = useState({ open: false, message: '', title: '' })
 
   const LoadBitcoin = () => {
@@ -53,17 +53,17 @@ export default function Home({ }) {
     Loadbrita()
   }, [])
 
-  const handleClickLogout = () => {
+  const handleLogout = () => {
     window.location = '/login'
     localStorage.removeItem(`currentUser`);
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleOpenTransactions = () => {
+    setOpenTransactions(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseTransactions = () => {
+    setOpenTransactions(false);
   }
 
   const handleOpenNotification = (message, title) => {
@@ -84,7 +84,7 @@ export default function Home({ }) {
           <div>
             <Button
               className={classes.button}
-              onClick={handleClickLogout}
+              onClick={handleLogout}
               variant="outlined"
             >
               <b> Sair </b>
@@ -98,7 +98,7 @@ export default function Home({ }) {
               className={classes.button}
               endIcon={<TrendingUpIcon />}
               variant="outlined"
-              onClick={handleClickOpen}>
+              onClick={handleOpenTransactions}>
               <b>Transações</b>
             </Button>
           </div>
@@ -118,11 +118,11 @@ export default function Home({ }) {
               bitcoin={bitcoin}
               brita={brita}
               currentUser={getCurrentUser}
-              handleClose={handleClose}
+              handleCloseTransactions={handleCloseTransactions}
               setModalNotification={setModalNotification}
               handleCloseNotification={handleCloseNotification}
               handleOpenNotification={handleOpenNotification}
-              open={open}
+              openTransactions={openTransactions}
             />
             {modalNotification.open &&
               <NotificationModal

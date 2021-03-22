@@ -55,8 +55,7 @@ export default function Login({ }) {
       setShowerror(true)
       return
     }
-    const convertPassword = JSON.parse(getPassword);
-    const storagePassword = convertPassword?.password
+    const storagePassword = JSON.parse(getPassword)?.password
     if (password != storagePassword) {
       setShowerror(true)
       return

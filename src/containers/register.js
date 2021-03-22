@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-
 import {
   Grid,
   Button,
@@ -7,7 +6,6 @@ import {
   InputLabel,
   OutlinedInput
 } from '@material-ui/core'
-
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -55,7 +53,6 @@ export default function Login({ }) {
   const classes = useStyles();
   const [name, setName] = useState("")
   const [passwordConfirm, setpassWordConfirm] = useState("")
-  const [showError, setShowerror] = useState(false)
   const userJson = JSON.stringify(password);
   const userWalletJson = JSON.stringify(userWallet);
   const [values, setValues] = useState({
@@ -69,10 +66,8 @@ export default function Login({ }) {
     if (password.password === passwordConfirm) {
       localStorage.setItem(`login_${name}`, userJson);
       localStorage.setItem(`${name}`, userWalletJson);
-      setShowerror(false)
       window.location = '/login'
     } else {
-      setShowerror(true)
       return
     }
   }
@@ -156,7 +151,7 @@ export default function Login({ }) {
       <Grid style={{ marginTop: 5 }} item xs={12}>
         <Button
           className={classes.button}
-          disabled={!name || !password.password || !passwordConfirm}
+          disabled={!name || !password.password || !passwordConfirm || password.password != passwordConfirm}
           onClick={handleSubmit} variant="contained"
         >
           Criar

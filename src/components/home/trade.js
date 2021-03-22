@@ -51,19 +51,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default props => {
-  const { userWallet, bitcoin, brita, currentUser, handleClose, open, handleOpenNotification } = props
+  const { userWallet, bitcoin, brita, currentUser, handleCloseTransactions, openTransactions, handleOpenNotification } = props
   const [operation, setOperation] = useState({
-    moeda1: '',
-    moeda2: '',
-    value: 0,
-    valor: 0,
+    currency1: '',
+    currency2: '',
+    currencyValue1: 0,
+    currencyValue2: 0,
   })
   const [calculatedValue, setCalculatedValue] = useState()
-  const cotacaoCompra = {
+  const buyPrice = {
     BTC: bitcoin.buy,
     BRT: brita.cotacaoCompra
   }
-  const cotacaoVenda = {
+  const sellPrice = {
     BTC: bitcoin.sell,
     BRT: brita.cotacaoVenda
   }
@@ -82,58 +82,58 @@ export default props => {
 
   const handleChangeStatus = (name, e) => {
     setOperation({
-      moeda1: '',
-      moeda2: '',
-      value: 0,
-      valor: 0,
+      currency1: '',
+      currency2: '',
+      currencyValue1: 0,
+      currencyValue2: 0,
       [name]: e.target.value
     })
     setCalculatedValue(0)
   }
 
-  const cotar = () => {
-    let novaCotacao = 0
+  const calculatePrice = () => {
+    let newPrice = 0
     if (operation.status === 'compra') {
-      novaCotacao = cotacaoCompra[operation.moeda2]
+      newPrice = buyPrice[operation.currency2]
     } else if (operation.status === 'venda') {
-      novaCotacao = cotacaoVenda[operation.moeda2]
+      newPrice = sellPrice[operation.currency2]
     } else if (operation.status === 'troca') {
-      novaCotacao = cotacaoCompra[operation.moeda2] / cotacaoVenda[operation.moeda1]
+      newPrice = buyPrice[operation.currency2] / sellPrice[operation.currency1]
     }
-    setOperation({ ...operation, valor: operation.value / novaCotacao || 0 })
-    setCalculatedValue(operation.value / novaCotacao)
+    setOperation({ ...operation, currencyValue2: operation.currencyValue1 / newPrice || 0 })
+    setCalculatedValue(operation.currencyValue1 / newPrice)
   }
 
   const handleSave = () => {
 
     const handleBuyOperation = () => {
-      let balance = userWallet.balance - operation.value
+      let balance = userWallet.balance - operation.currencyValue1
       if (balance < 0) {
         showError = true
         return
       }
       userWallet.balance = balance
-      userWallet[operation.moeda2] = userWallet[operation.moeda2] + operation.valor
+      userWallet[operation.currency2] = userWallet[operation.currency2] + operation.currencyValue2
     }
 
     const handleChangeOperation = () => {
-      let moeda1Value = userWallet[operation.moeda1] - operation.value
-      if (moeda1Value < 0) {
+      let currency1Balance = userWallet[operation.currency1] - operation.currencyValue1
+      if (currency1Balance < 0) {
         showError = true
         return
       }
-      userWallet[operation.moeda1] = moeda1Value
-      userWallet[operation.moeda2] = userWallet[operation.moeda2] + operation.valor
+      userWallet[operation.currency1] = currency1Balance
+      userWallet[operation.currency2] = userWallet[operation.currency2] + operation.currencyValue2
     }
 
     const handleSellOperation = () => {
-      let moeda2Balance = userWallet[operation.moeda2] - operation.valor
-      if (moeda2Balance < 0) {
+      let currency2Balance = userWallet[operation.currency2] - operation.currencyValue2
+      if (currency2Balance < 0) {
         showError = true
         return
       }
-      userWallet.balance = userWallet.balance + operation.value
-      userWallet[operation.moeda2] = moeda2Balance
+      userWallet.balance = userWallet.balance + operation.currencyValue1
+      userWallet[operation.currency2] = currency2Balance
     }
 
     let showError = false
@@ -152,36 +152,36 @@ export default props => {
     }
 
     let date = Date.now()
-    const extrato1 = {
+    const extract1 = {
       date: date,
-      currency: operation.moeda1,
-      value: operation.status === 'venda' ? operation.value : - operation.value,
-      balance: operation.status === 'troca' ? userWallet[operation.moeda1] : userWallet.balance,
+      currency: operation.currency1,
+      value: operation.status === 'venda' ? operation.currencyValue1 : - operation.currencyValue1,
+      balance: operation.status === 'troca' ? userWallet[operation.currency1] : userWallet.balance,
       operation: operation.status
     }
-    const extrato2 = {
+    const extract2 = {
       date: date,
-      currency: operation.moeda2,
-      value: operation.status === 'venda' ? - operation.valor : operation.valor,
-      balance: userWallet[operation.moeda2],
+      currency: operation.currency2,
+      value: operation.status === 'venda' ? - operation.currencyValue2 : operation.currencyValue2,
+      balance: userWallet[operation.currency2],
       operation: operation.status
     }
 
-    userWallet.extract.push(extrato1)
-    userWallet.extract.push(extrato2)
+    userWallet.extract.push(extract1)
+    userWallet.extract.push(extract2)
 
     localStorage.setItem(`${currentUser}`, JSON.stringify(userWallet));
 
-    handleClose()
+    handleCloseTransactions()
     handleOpenNotification('Operação realizada com sucesso.', 'Sucesso')
   }
 
   return (
     <>
-      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition} >
+      <Dialog fullScreen open={openTransactions} onClose={handleCloseTransactions} TransitionComponent={Transition} >
         <AppBar className={classes.appBar} style={{ backgroundColor: 'green' }}>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+            <IconButton edge="start" color="inherit" onClick={handleCloseTransactions} aria-label="close">
               <CloseIcon />
             </IconButton>
             <div>
@@ -196,8 +196,7 @@ export default props => {
               <Grid container>
                 <Grid item xs={12} >
                   <h3> Bitcoin </h3>
-
-                  <p> <b>Compra:</b> BRL {bitcoin.buy} <br />
+                    <p> <b>Compra:</b> BRL {bitcoin.buy} <br />
                     <b> Venda:</b> BRL {bitcoin.sell} </p>
                 </Grid>
                 <Grid item xs={12}>
@@ -249,11 +248,11 @@ export default props => {
                   <CustomSelect
                     disabled={!operation.status}
                     style={{ width: '40%' }}
-                    name={operation.moeda1}
-                    labelId="moeda1"
-                    id="moeda1"
-                    value={operation.moeda1}
-                    onChange={(e) => handleChange('moeda1', e)}
+                    name={operation.currency1}
+                    labelId="currency1"
+                    id="currency1"
+                    value={operation.currency1}
+                    onChange={(e) => handleChange('currency1', e)}
                     required
                   >
                     <option value={""}>
@@ -269,14 +268,13 @@ export default props => {
                       Brita (BRT)
                     </option>
                   </CustomSelect>
-
                   <InputBase
                     className={classes.inputBase}
                     placeholder="Quantidade"
                     type="number"
                     inputProps={{ min: 0 }}
-                    value={operation.value}
-                    onChange={(e) => handleChangeValue('value', e)}
+                    value={operation.currencyValue1}
+                    onChange={(e) => handleChangeValue('currencyValue1', e)}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -286,23 +284,22 @@ export default props => {
                   <CustomSelect
                     disabled={!operation.status}
                     style={{ width: '40%' }}
-                    labelId="moeda2"
-                    id="moeda2"
-                    value={operation.moeda2}
-                    onChange={(e) => handleChange('moeda2', e)}
+                    labelId="currency2"
+                    id="currency2"
+                    value={operation.currency2}
+                    onChange={(e) => handleChange('currency2', e)}
                     required
                   >
                     <option value={""}>
                       Selecione
                     </option>
-                    <option disabled={operation.moeda1 === 'BTC'} value={"BTC"}>
+                    <option disabled={operation.currency1 === 'BTC'} value={"BTC"}>
                       Bitcoin (BTC)
                     </option>
-                    <option disabled={operation.moeda1 === 'BRT'} value={"BRT"}>
+                    <option disabled={operation.currency1 === 'BRT'} value={"BRT"}>
                       Brita (BRT)
                    </option>
                   </CustomSelect>
-
                   <InputBase
                     className={classes.inputBase}
                     disabled
@@ -313,8 +310,6 @@ export default props => {
                 </Grid>
               </Grid>
             </Paper>
-
-
           </Grid>
           <Grid item xs={6} className={classes.grid2}>
           </Grid>
@@ -322,13 +317,13 @@ export default props => {
             <div style={{ width: 400, marginTop: 20 }}>
               <Button
                 className={classes.button}
-                onClick={cotar}
+                onClick={calculatePrice}
                 variant="contained" >
                 Calcular
                 </Button>
               <Button
                 className={classes.button}
-                disabled={operation.valor === 0}
+                disabled={operation.currencyValue2 === 0}
                 onClick={handleSave}
                 variant="contained"  >
                 Finalizar
