@@ -205,7 +205,7 @@ export default props => {
                 <Grid item xs={12}>
                   <h3>Brita</h3>
                   <p> <b>Compra:</b> BRL {brita.cotacaoCompra} <br />
-                    <b>Vender:</b> BRL {brita.cotacaoVenda} </p>
+                    <b>Venda:</b> BRL {brita.cotacaoVenda} </p>
                 </Grid>
               </Grid>
             </Paper>
@@ -261,10 +261,10 @@ export default props => {
                     <option disabled={operation.status === 'troca'} value={"BRL"}>
                       Real (BRL)
                     </option>
-                    <option disabled={operation.status === 'venda' || operation.status === 'compra'} value={"BTC"}>
+                    <option disabled={operation.status === 'venda' || operation.status === 'compra' || operation.currency2 === 'BTC'} value={"BTC"}>
                       Bitcoin (BTC)
                     </option>
-                    <option disabled={operation.status === 'venda' || operation.status === 'compra'} value={"BRT"}>
+                    <option disabled={operation.status === 'venda' || operation.status === 'compra' || operation.currency2 === 'BRT'}  value={"BRT"}>
                       Brita (BRT)
                     </option>
                   </CustomSelect>
@@ -293,7 +293,7 @@ export default props => {
                     <option value={""}>
                       Selecione
                     </option>
-                    <option disabled={operation.currency1 === 'BTC'} value={"BTC"}>
+                    <option disabled={operation.currency1 === 'BTC' } value={"BTC"}>
                       Bitcoin (BTC)
                     </option>
                     <option disabled={operation.currency1 === 'BRT'} value={"BRT"}>

@@ -1,70 +1,46 @@
-# Getting Started with Create React App
+# Carteira Virtual
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Descrição
 
-## Available Scripts
+O Web App precisa fornecer carteiras virtuais de criptomoedas. 
+Todo cliente possui ao se cadastrar recebe R$ 100.000,00 (cem mil reais) em conta para comprar Bitcoins e Britas. A cotação da criptomoeda Brita é equivalente ao dólar e pode ser consultada na API do Banco Central enquanto que a cotação do Bitcoin pode ser consultada na API do Mercado Bitcoin.
 
-In the project directory, you can run:
+## Dependências
 
-### `yarn start`
+- NodeJS
+- Yarn
+- npm
+- React
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Como rodar
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Primeiramente, clone o projeto:
 
-### `yarn test`
+```
+  git clone https://github.com/AldreiMiranda/virtual-wallet.git
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Antes de rodar a aplicação, é necessário instalar as dependências listadas no arquivo `package.json`. Entre na pasta raíz do projeto e execute:
 
-### `yarn build`
+```
+  npm install
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Com as dependências instaladas, execute a aplicação em modo de desenvolvimento com o comando:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+  yarn start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Abra o browser e acesse [http://localhost:3000](http://localhost:3000).
 
-### `yarn eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Como usar
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Para acessar a carteira virtual, é necessário cadastrar um perfil (usuário e senha). 
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Feito o cadastro, use as credenciais para logar na aplicação.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+A página inicial possui a visualização de saldos e extratos da carteira. O saldo de cada moeda está apresentado no formato de card. No caso de criptomoedas, o card conta com dois valores: a quantidade de moedas e o valor que ela representa em reais (considerando a cotação de venda).
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+No modal de "Transações" é possível operar com as moedas. As operações dísponíveis são compra, venda e troca. Toda operação finalizada é registrada no extrato da carteira.

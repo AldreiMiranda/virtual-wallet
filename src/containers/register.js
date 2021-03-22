@@ -91,6 +91,7 @@ export default function Login({ }) {
           <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
             <InputLabel >Usuário </InputLabel>
             <OutlinedInput
+              name='name'
               type={'text'}
               value={name}
               onChange={e => setName(e.target.value)}
@@ -113,6 +114,7 @@ export default function Login({ }) {
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
+                    name='password'
                     aria-label="toggle password visibility"
                     onClick={() => setValues({ ...values, showPassword: !values.showPassword })}
                     edge="end"
@@ -129,6 +131,7 @@ export default function Login({ }) {
           <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
             <InputLabel >Confirmar senha </InputLabel>
             <OutlinedInput
+              name='confirmpassword'
               type={values.showConfirmedpassword ? 'text' : 'password'}
               value={passwordConfirm}
               onChange={e => setpassWordConfirm(e.target.value)}
