@@ -3,6 +3,7 @@
 ## Descrição
 
 O Web App precisa fornecer carteiras virtuais de criptomoedas. 
+
 Todo cliente possui ao se cadastrar recebe R$ 100.000,00 (cem mil reais) em conta para comprar Bitcoins e Britas. A cotação da criptomoeda Brita é equivalente ao dólar e pode ser consultada na API do Banco Central enquanto que a cotação do Bitcoin pode ser consultada na API do Mercado Bitcoin.
 
 ## Dependências
