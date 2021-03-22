@@ -91,6 +91,7 @@ export default function Login({ }) {
           <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
             <InputLabel >Usuário </InputLabel>
             <OutlinedInput
+              name='name'
               type={'text'}
               value={name}
               onChange={e => setName(e.target.value)}
@@ -107,6 +108,7 @@ export default function Login({ }) {
           <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
             <InputLabel >Senha </InputLabel>
             <OutlinedInput
+              name='password'
               type={values.showPassword ? 'text' : 'password'}
               value={password.password}
               onChange={e => setPassword({ ...password, password: e.target.value })}
@@ -129,6 +131,7 @@ export default function Login({ }) {
           <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
             <InputLabel >Confirmar senha </InputLabel>
             <OutlinedInput
+              name='confirmpassword'
               type={values.showConfirmedpassword ? 'text' : 'password'}
               value={passwordConfirm}
               onChange={e => setpassWordConfirm(e.target.value)}

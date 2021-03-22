@@ -9,7 +9,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import moment from 'moment';
-import './../../containers/style.css'
+
 
 const columns = [
   { id: 'date', label: 'Data/Hora', format: (date) => moment(date).format('DD/MM/YYYY - HH:mm') },
