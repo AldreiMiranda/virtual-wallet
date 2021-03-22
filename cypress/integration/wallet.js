@@ -1,5 +1,5 @@
 
-
+import moment from 'moment';
 const user = Math.random().toString().substr(2, 5)
 const password = Math.random().toString().substr(2, 5)
 
@@ -113,14 +113,12 @@ describe('virtual Wallet', () => {
     })
   }
 
-  const date = new Date();
-  const d = date.getDate();
-  const m = date.getMonth() + 1;
-  const y = date.getFullYear();
-  const britaDay = m + '-' + d + '-' + y
+
+  const date =  new Date()
+  const britaDate = moment(date).format('MM-DD-YYYY')
 
   const validBritaAPI = () => {
-    cy.request('GET', `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarPeriodo(dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?%40dataInicial='03-10-2021'&%40dataFinalCotacao='${britaDay}'&%24format=json`).then((response) => {
+    cy.request('GET', `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarPeriodo(dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?%40dataInicial='03-10-2021'&%40dataFinalCotacao='${britaDate}'&%24format=json`).then((response) => {
       expect(response.status).equal(200)
       expect(response.body).to.not.be.null
     })

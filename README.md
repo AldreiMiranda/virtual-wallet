@@ -7,8 +7,8 @@ O Web App tem como objetivo fornecer carteiras virtuais de criptomoedas.
 Todo cliente possui ao se cadastrar R$ 100.000,00 (cem mil reais) em conta para comprar Bitcoins e Britas. A cotação da criptomoeda Brita é equivalente ao dólar e é consultada na API do Banco Central enquanto que a cotação do Bitcoin é consultada na API do Mercado Bitcoin.
 
 ## Dependências
+  
 
-- NodeJS
 - Yarn
 - npm
 - React
@@ -34,6 +34,12 @@ Com as dependências instaladas, execute a aplicação em modo de desenvolviment
 ```
 
 Abra o browser e acesse [http://localhost:3000](http://localhost:3000).
+
+Testes realizados em cypress.
+
+```
+./node_modules/.bin/cypress open
+```
 
 
 ## Como usar
